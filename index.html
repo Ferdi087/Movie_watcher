@@ -1014,11 +1014,11 @@
     }
 
     // PC-Version wurde erkannt -> alles einblenden
-    wrap.style.display = "";
-    pcSection.style.display = "";
-    navPcLink.style.display = "";
-    pcSep.style.display = "";
-    badgePc.style.display = "";
+    wrap.style.display = "block";
+    pcSection.style.display = "block";
+    navPcLink.style.display = "inline";
+    pcSep.style.display = "inline";
+    badgePc.style.display = "inline-flex";
 
     entries.sort((a, b) => compareVersions(b.version, a.version));
     const latest = entries[0];
