@@ -275,8 +275,30 @@
   .btn-text small{
     font-family:'JetBrains Mono', monospace; font-size:.76rem; opacity:.75;
   }
+
+  /* Sekundärer PC-Download-Button (outline-Stil, damit klar als "andere Version" erkennbar) */
+  .btn-download-pc{
+    background: var(--surface);
+    color: var(--ink);
+    border: 1.5px solid var(--line);
+    box-shadow: var(--shadow-sm);
+  }
+  .btn-download-pc:hover{
+    border-color: var(--coral);
+    box-shadow: var(--shadow-md);
+  }
+  .btn-download-pc .btn-icon{
+    background: var(--accent-soft);
+    color: var(--coral);
+  }
+  .btn-download-pc .btn-fill{
+    background: var(--grad-warm);
+    opacity: .16;
+  }
+  .btn-download-pc.is-filling .btn-fill{ width:100%; }
+
   .hero-meta{
-    display:flex; align-items:center; gap:10px;
+    display:flex; align-items:center; gap:10px; flex-wrap: wrap;
     font-size:.85rem; color: var(--ink-faint);
     font-family:'JetBrains Mono', monospace;
     padding-left: 4px;
@@ -286,6 +308,7 @@
     display:inline-flex; align-items:center; gap:6px;
     color: var(--teal); font-weight:600;
   }
+  .badge-pc{ color: var(--coral); font-weight:600; }
 
   /* phone mockup */
   .phone-wrap{
@@ -371,6 +394,7 @@
     font-size:.8rem; font-weight:600; letter-spacing:.08em; text-transform:uppercase;
     color: var(--teal); margin-bottom:12px; display:block;
   }
+  .section-eyebrow.is-pc{ color: var(--coral); }
   .section-title{ font-size: clamp(1.7rem, 3.6vw, 2.4rem); margin-bottom:14px; }
   .section-sub{ color: var(--ink-soft); font-size:1.03rem; }
 
@@ -437,6 +461,9 @@
     background-origin: border-box;
     box-shadow: 0 0 0 1px var(--accent-soft);
   }
+  .version-card.is-latest.is-pc{
+    box-shadow: 0 0 0 1px rgba(255,122,89,.25);
+  }
   .version-left{ display:flex; align-items:center; gap:16px; }
   .version-tag{
     font-family:'JetBrains Mono', monospace; font-weight:600; font-size:1.02rem;
@@ -446,6 +473,7 @@
     min-width: 92px; text-align:center;
   }
   .is-latest .version-tag{ background: var(--accent-soft); color: var(--accent-dark); }
+  .is-latest.is-pc .version-tag{ background: #FFF1EC; color: var(--coral); }
   .version-info{ display:flex; flex-direction:column; gap:2px; }
   .version-file{ font-size:.82rem; color: var(--ink-faint); font-family:'JetBrains Mono', monospace; }
   .version-size{ font-size:.82rem; color: var(--ink-faint); }
@@ -453,6 +481,7 @@
     font-size:.68rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
     background: var(--grad-warm); color:#fff; padding:3px 9px; border-radius:99px;
   }
+  .latest-pill.is-brand{ background: var(--grad-brand); }
   .btn-small{
     display:inline-flex; align-items:center; gap:8px;
     background: var(--ink); color:#fff;
@@ -482,6 +511,10 @@
   .error-state code{
     background: var(--bg-alt); padding:2px 6px; border-radius:6px; font-size:.85em;
   }
+
+  /* PC-Sektion ist per Default versteckt, bis EXE-Dateien gefunden wurden */
+  #pc-versions{ display:none; }
+  #pcDownloadWrap{ display:none; }
 
   /* ============================================================
      FOOTER
@@ -521,6 +554,7 @@
     <div class="nav-links">
       <a href="#features">Funktionen</a>
       <a href="#versions">Versionen</a>
+      <a href="#pc-versions" id="navPcLink" style="display:none;">PC-Version</a>
       <a class="nav-cta" href="#download">Download</a>
     </div>
   </div>
@@ -557,6 +591,24 @@
             <small id="btnVersion">Version wird geladen …</small>
           </span>
         </a>
+
+        <!-- Erscheint nur automatisch, wenn eine .exe-Datei im Repo gefunden wird -->
+        <div id="pcDownloadWrap">
+          <a href="#" id="pcDownloadBtn" class="btn-download btn-download-pc" download>
+            <span class="btn-fill"></span>
+            <span class="btn-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="4" width="20" height="13" rx="2"></rect>
+                <path d="M8 21h8M12 17v4"></path>
+              </svg>
+            </span>
+            <span class="btn-text">
+              <strong>PC-Version herunterladen</strong>
+              <small id="pcBtnVersion">Version wird geladen …</small>
+            </span>
+          </a>
+        </div>
+
         <div class="hero-meta">
           <span class="badge-android">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.6 9.48l1.84-3.18c.16-.31.04-.69-.26-.85a.6.6 0 0 0-.83.22l-1.88 3.24a11.43 11.43 0 0 0-8.94 0L5.65 5.67a.6.6 0 0 0-.83-.22c-.3.16-.42.54-.26.85L6.4 9.48C3.3 11.25 1.28 14.44 1 18h22c-.28-3.56-2.3-6.75-5.4-8.52M7 15.25a1.25 1.25 0 1 1 0-2.5 1.25 1.25 0 0 1 0 2.5m10 0a1.25 1.25 0 1 1 0-2.5 1.25 1.25 0 0 1 0 2.5"/></svg>
@@ -564,6 +616,11 @@
           </span>
           <span class="sep">·</span>
           <span id="heroSize">– MB</span>
+          <span class="sep" id="pcSep" style="display:none;">·</span>
+          <span class="badge-pc" id="badgePcAvailable" style="display:none;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="13" rx="2"></rect><path d="M8 21h8M12 17v4"></path></svg>
+            Auch für PC verfügbar
+          </span>
         </div>
       </div>
     </div>
@@ -617,7 +674,7 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
         </div>
         <h3>Direkt &amp; sicher</h3>
-        <p>Jede APK stammt direkt aus diesem Repository — nachvollziehbar und transparent.</p>
+        <p>Jede Datei stammt direkt aus diesem Repository — nachvollziehbar und transparent.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">
@@ -634,7 +691,7 @@
   <div class="container">
     <div class="section-head reveal">
       <span class="section-eyebrow">Verlauf</span>
-      <h2 class="section-title">Versionsübersicht</h2>
+      <h2 class="section-title">Versionsübersicht (Android)</h2>
       <p class="section-sub">Alle bisher veröffentlichten APKs, automatisch erkannt anhand der Dateinamen im Repository.</p>
     </div>
 
@@ -650,10 +707,29 @@
   </div>
 </section>
 
+<!-- Diese Sektion wird per JS eingeblendet, sobald mindestens eine .exe-Datei gefunden wird -->
+<section class="section" id="pc-versions">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="section-eyebrow is-pc">PC-Verlauf</span>
+      <h2 class="section-title">Versionsübersicht (PC)</h2>
+      <p class="section-sub">Alle bisher veröffentlichten Windows-EXE-Dateien, automatisch erkannt anhand der Dateinamen im Repository.</p>
+    </div>
+
+    <div class="version-toolbar reveal">
+      <span class="version-status" id="pcVersionStatus">Lade PC-Versionen …</span>
+    </div>
+
+    <div class="version-grid" id="pcVersionList">
+      <div class="skeleton"></div>
+    </div>
+  </div>
+</section>
+
 <footer>
   <div class="container footer-inner">
     <span class="footer-brand" id="footerAppName">App</span>
-    <span class="footer-note">Diese Seite listet APK-Dateien automatisch anhand ihres Dateinamens im Repository.</span>
+    <span class="footer-note">Diese Seite listet APK- und EXE-Dateien automatisch anhand ihres Dateinamens im Repository.</span>
     <div class="footer-links">
       <a href="#top">Nach oben</a>
       <a id="footerRepoLink" href="#" target="_blank" rel="noopener">GitHub Repository</a>
@@ -666,25 +742,33 @@
    KONFIGURATION — HIER ANPASSEN
    ================================================================
    APP_NAME        : Der Name deiner App. Wird überall auf der Seite
-                      angezeigt und muss dem Präfix deiner APK-Dateien
-                      entsprechen: "APP_NAME-VERSION.apk"
-                      Beispiel: "MeineApp-1.2.0.apk"
+                      angezeigt und muss dem Präfix deiner Dateien
+                      entsprechen: "APP_NAME-VERSION.apk" bzw.
+                      "APP_NAME-VERSION.exe"
+                      Beispiel: "MeineApp-1.2.0.apk" / "MeineApp-1.2.0.exe"
 
    GITHUB_OWNER     : Dein GitHub-Benutzername (oder Organisation)
    GITHUB_REPO      : Der Name des Repositories, in dem index.html
-                      und die .apk-Dateien liegen
+                      und die .apk/.exe-Dateien liegen
    GITHUB_BRANCH    : Der Branch, in dem die Dateien liegen (meist "main")
 
    Damit die automatische Erkennung funktioniert, muss die Seite über
    GitHub Pages (oder einen anderen Host desselben Repos) laufen und
    GITHUB_OWNER/GITHUB_REPO müssen korrekt gesetzt sein.
 
-   MANUAL_APK_FILES : Optionaler manueller Fallback. Wird nur verwendet,
-                      wenn die automatische GitHub-Erkennung fehlschlägt
-                      (z.B. kein Internetzugriff auf die GitHub-API,
-                      privates Repo, oder lokal getestet ohne Netzwerk).
+   MANUAL_APK_FILES : Optionaler manueller Fallback für Android-APKs.
+   MANUAL_EXE_FILES : Optionaler manueller Fallback für PC-EXEs.
+                      Wird nur verwendet, wenn die automatische
+                      GitHub-Erkennung fehlschlägt (z.B. kein
+                      Internetzugriff auf die GitHub-API, privates
+                      Repo, oder lokal getestet ohne Netzwerk).
                       Einfach die Dateinamen eintragen, die im selben
                       Ordner wie index.html liegen.
+
+   Die PC-Version (Download-Button + eigene Tabelle) wird komplett
+   automatisch ein-/ausgeblendet, je nachdem ob mindestens eine
+   passende .exe-Datei gefunden wurde. Du musst nichts manuell
+   umschalten.
    ================================================================ */
   const APP_NAME        = "Movie_Watcher";     // <-- Name deiner App eintragen
   const GITHUB_OWNER    = "Ferdi087";  // <-- GitHub-Benutzername eintragen
@@ -694,6 +778,11 @@
   const MANUAL_APK_FILES = [
     // "MeineApp-1.0.0.apk",
      "Movie_Watcher-1.0.apk",
+  ];
+
+  const MANUAL_EXE_FILES = [
+    // "MeineApp-1.0.0.exe",
+    // "Movie_Watcher-1.0.exe",
   ];
 
 /* ================================================================
@@ -756,20 +845,21 @@
     return 0;
   }
 
-  function apkRegex(){
-    // Striktes Format: Name-Version.apk
+  // Generische Datei-Erkennung: baut ein Regex für eine bestimmte Endung (apk/exe)
+  function fileRegex(ext){
+    // Striktes Format: Name-Version.ext
     // Version darf nur aus Ziffern und Punkten bestehen (z.B. 1.0, 2.3.1)
-    return new RegExp("^" + escapeRegExp(APP_NAME.trim()) + "-(\\d+(?:\\.\\d+)*)\\.apk$", "i");
+    return new RegExp("^" + escapeRegExp(APP_NAME.trim()) + "-(\\d+(?:\\.\\d+)*)\\." + ext + "$", "i");
   }
 
-  function buildEntry(filename, sizeBytes){
-    const m = filename.match(apkRegex());
+  function buildEntry(filename, sizeBytes, ext){
+    const m = filename.match(fileRegex(ext));
     if (!m) return null;
     return { filename, version: m[1], size: sizeBytes };
   }
 
-  // -------- Versionsdaten laden --------
-  async function loadFromGitHub(){
+  // -------- Repo-Dateien laden (ein API-Call, danach in apk/exe aufgeteilt) --------
+  async function fetchRepoFiles(){
     const placeholder = GITHUB_OWNER === "dein-github-name" || GITHUB_REPO === "dein-repo-name";
     if (placeholder) throw new Error("GitHub-Konfiguration wurde noch nicht angepasst.");
 
@@ -779,36 +869,46 @@
     const data = await res.json();
     if (!Array.isArray(data)) throw new Error("Unerwartete Antwort der GitHub-API.");
 
-    const entries = data
-      .filter(item => item.type === "file")
-      .map(item => buildEntry(item.name, item.size))
-      .filter(Boolean);
-
-    return entries;
+    return data.filter(item => item.type === "file");
   }
 
-  function loadFromManualList(){
-    return MANUAL_APK_FILES
-      .map(name => buildEntry(name, null))
-      .filter(Boolean);
+  function loadManual(ext){
+    const list = ext === "exe" ? MANUAL_EXE_FILES : MANUAL_APK_FILES;
+    return list.map(name => buildEntry(name, null, ext)).filter(Boolean);
   }
 
-  async function loadApkEntries(){
+  async function loadEntries(){
+    let apkEntries = [], exeEntries = [];
+    let apkSource = "manual", exeSource = "manual";
+    let error = null;
+
     try {
-      const entries = await loadFromGitHub();
-      if (entries.length > 0) return { entries, source: "github" };
-      // GitHub erreichbar, aber keine passenden Dateien gefunden -> Fallback prüfen
-      const manual = loadFromManualList();
-      return { entries: manual, source: manual.length ? "manual" : "github-empty" };
+      const files = await fetchRepoFiles();
+      apkEntries = files.map(f => buildEntry(f.name, f.size, "apk")).filter(Boolean);
+      exeEntries = files.map(f => buildEntry(f.name, f.size, "exe")).filter(Boolean);
+      apkSource = apkEntries.length ? "github" : "github-empty";
+      exeSource = exeEntries.length ? "github" : "github-empty";
     } catch (err) {
-      const manual = loadFromManualList();
-      if (manual.length > 0) return { entries: manual, source: "manual" };
-      return { entries: [], source: "error", error: err };
+      error = err;
+      apkSource = "error";
+      exeSource = "error";
     }
+
+    // Fallback auf manuelle Listen, falls GitHub nichts geliefert hat
+    if (apkEntries.length === 0){
+      const manual = loadManual("apk");
+      if (manual.length){ apkEntries = manual; apkSource = "manual"; }
+    }
+    if (exeEntries.length === 0){
+      const manual = loadManual("exe");
+      if (manual.length){ exeEntries = manual; exeSource = "manual"; }
+    }
+
+    return { apkEntries, exeEntries, apkSource, exeSource, error };
   }
 
-  // -------- Rendering --------
-  function renderVersions(entries, source, error){
+  // -------- Rendering: Android/APK (Hauptbereich) --------
+  function renderVersions(entries, source){
     const listEl = document.getElementById("versionList");
     const statusEl = document.getElementById("versionStatus");
     const mainBtn = document.getElementById("mainDownloadBtn");
@@ -875,7 +975,7 @@
             <span class="version-file">${entry.filename}</span>
             <span class="version-size">${entry.size != null ? formatBytes(entry.size) : "Größe unbekannt"}</span>
           </div>
-          ${i === 0 ? '<span class="latest-pill">Neueste</span>' : ""}
+          ${i === 0 ? '<span class="latest-pill is-brand">Neueste</span>' : ""}
         </div>
         <a class="btn-small" href="${encodeURIComponent(entry.filename)}" download="${entry.filename}">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -891,29 +991,100 @@
     observeCounters();
   }
 
-  loadApkEntries().then(({ entries, source, error }) => {
-    renderVersions(entries, source, error);
+  // -------- Rendering: PC/EXE (Button + eigene Tabelle) --------
+  function renderPcVersions(entries, source){
+    const wrap = document.getElementById("pcDownloadWrap");
+    const pcSection = document.getElementById("pc-versions");
+    const navPcLink = document.getElementById("navPcLink");
+    const pcBtn = document.getElementById("pcDownloadBtn");
+    const pcBtnVersionEl = document.getElementById("pcBtnVersion");
+    const pcSep = document.getElementById("pcSep");
+    const badgePc = document.getElementById("badgePcAvailable");
+    const listEl = document.getElementById("pcVersionList");
+    const statusEl = document.getElementById("pcVersionStatus");
+
+    // Keine EXE-Datei gefunden -> Button, Badge und ganze Sektion bleiben versteckt
+    if (!entries || entries.length === 0){
+      wrap.style.display = "none";
+      pcSection.style.display = "none";
+      navPcLink.style.display = "none";
+      pcSep.style.display = "none";
+      badgePc.style.display = "none";
+      return;
+    }
+
+    // PC-Version wurde erkannt -> alles einblenden
+    wrap.style.display = "";
+    pcSection.style.display = "";
+    navPcLink.style.display = "";
+    pcSep.style.display = "";
+    badgePc.style.display = "";
+
+    entries.sort((a, b) => compareVersions(b.version, a.version));
+    const latest = entries[0];
+
+    pcBtn.href = encodeURIComponent(latest.filename);
+    pcBtn.setAttribute("download", latest.filename);
+    pcBtnVersionEl.textContent = "Version " + latest.version + (latest.size != null ? " · " + formatBytes(latest.size) : "");
+    pcBtn.style.opacity = "";
+    pcBtn.style.pointerEvents = "";
+
+    const sourceLabel = source === "github" ? "automatisch von GitHub erkannt" : "aus manueller Liste geladen";
+    statusEl.textContent = `${entries.length} Version${entries.length === 1 ? "" : "en"} · ${sourceLabel}`;
+
+    listEl.innerHTML = "";
+    entries.forEach((entry, i) => {
+      const card = document.createElement("div");
+      card.className = "version-card is-pc" + (i === 0 ? " is-latest" : "");
+      card.innerHTML = `
+        <div class="version-left">
+          <span class="version-tag">v${entry.version}</span>
+          <div class="version-info">
+            <span class="version-file">${entry.filename}</span>
+            <span class="version-size">${entry.size != null ? formatBytes(entry.size) : "Größe unbekannt"}</span>
+          </div>
+          ${i === 0 ? '<span class="latest-pill">Neueste</span>' : ""}
+        </div>
+        <a class="btn-small" href="${encodeURIComponent(entry.filename)}" download="${entry.filename}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3v14"></path><path d="M6 11l6 6 6-6"></path><path d="M5 21h14"></path>
+          </svg>
+          Download
+        </a>
+      `;
+      listEl.appendChild(card);
+    });
+  }
+
+  loadEntries().then(({ apkEntries, exeEntries, apkSource, exeSource }) => {
+    renderVersions(apkEntries, apkSource);
+    renderPcVersions(exeEntries, exeSource);
   });
 
-  // -------- Download-Button: Fortschritts-Animation --------
-  document.getElementById("mainDownloadBtn").addEventListener("click", function(e){
-    const href = this.getAttribute("href");
-    if (!href) { e.preventDefault(); return; }
-    e.preventDefault();
-    const btn = this;
-    if (btn.classList.contains("is-filling")) return;
-    btn.classList.add("is-filling");
-    const filename = btn.getAttribute("download");
-    setTimeout(() => {
-      const tempLink = document.createElement("a");
-      tempLink.href = href;
-      tempLink.setAttribute("download", filename);
-      document.body.appendChild(tempLink);
-      tempLink.click();
-      document.body.removeChild(tempLink);
-      setTimeout(() => btn.classList.remove("is-filling"), 500);
-    }, 650);
-  });
+  // -------- Download-Button: Fortschritts-Animation (für beide Buttons) --------
+  function attachDownloadAnimation(btn){
+    if (!btn) return;
+    btn.addEventListener("click", function(e){
+      const href = this.getAttribute("href");
+      if (!href) { e.preventDefault(); return; }
+      e.preventDefault();
+      if (this.classList.contains("is-filling")) return;
+      const self = this;
+      self.classList.add("is-filling");
+      const filename = self.getAttribute("download");
+      setTimeout(() => {
+        const tempLink = document.createElement("a");
+        tempLink.href = href;
+        tempLink.setAttribute("download", filename);
+        document.body.appendChild(tempLink);
+        tempLink.click();
+        document.body.removeChild(tempLink);
+        setTimeout(() => self.classList.remove("is-filling"), 500);
+      }, 650);
+    });
+  }
+  attachDownloadAnimation(document.getElementById("mainDownloadBtn"));
+  attachDownloadAnimation(document.getElementById("pcDownloadBtn"));
 
   // -------- Scroll-Reveal --------
   const revealTargets = document.querySelectorAll(".reveal, .stagger");
