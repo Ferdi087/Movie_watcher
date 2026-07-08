@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Movie_watcher Download</title>
+<meta name="description" content="Offizielle Download-Seite mit allen Versionen zum direkten Herunterladen.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  /* ============================================================
+     DESIGN TOKENS
+     Basis: kühles, helles Weiß · Akzente: Indigo / Mint / Koralle
+     Display: Space Grotesk · Text: Inter · Daten/Version: JetBrains Mono
+     ============================================================ */
+  :root{
+    --bg: #FAFBFF;
+    --bg-alt: #F1F3FC;
+    --surface: #FFFFFF;
+    --ink: #14162B;
+    --ink-soft: #55597A;
+    --ink-faint: #9296B5;
+    --line: #E7E9F5;
+
+    --accent: #5B5FEF;
+    --accent-dark: #4347C4;
+    --accent-soft: #ECEDFF;
+    --teal: #00C2A8;
+    --coral: #FF7A59;
+
+    --grad-brand: linear-gradient(135deg, var(--accent) 0%, #7B6BFF 45%, var(--teal) 100%);
+    --grad-warm: linear-gradient(135deg, var(--coral), #FFB35C);
+
+    --shadow-sm: 0 2px 10px rgba(20,22,43,0.06);
+    --shadow-md: 0 12px 30px rgba(20,22,43,0.10);
+    --shadow-lg: 0 24px 60px rgba(91,95,239,0.22);
+
+    --radius: 20px;
+    --radius-sm: 12px;
+    --ease: cubic-bezier(.22,1,.36,1);
+  }
+
+  *{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', system-ui, sans-serif;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  h1,h2,h3{
+    font-family: 'Space Grotesk', 'Inter', sans-serif;
+    letter-spacing: -0.02em;
+    margin: 0;
+    color: var(--ink);
+  }
+  a{ color: inherit; text-decoration: none; }
+  ::selection{ background: var(--accent); color: #fff; }
+
+  .mono{ font-family: 'JetBrains Mono', monospace; }
+
+  .container{
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 28px;
+  }
+
+  /* focus visibility for keyboard users */
+  a:focus-visible, button:focus-visible{
+    outline: 2.5px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 8px;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
+  }
+
+  /* ============================================================
+     NAV
+     ============================================================ */
+  .nav{
+    position: fixed; top:0; left:0; right:0; z-index: 100;
+    padding: 18px 0;
+    transition: padding .35s var(--ease), background .35s var(--ease), box-shadow .35s var(--ease);
+  }
+  .nav.is-scrolled{
+    padding: 10px 0;
+    background: rgba(250,251,255,0.75);
+    backdrop-filter: blur(14px) saturate(160%);
+    box-shadow: var(--shadow-sm);
+  }
+  .nav-inner{
+    display:flex; align-items:center; justify-content: space-between;
+  }
+  .nav-logo{
+    display:flex; align-items:center; gap:10px;
+    font-family:'Space Grotesk', sans-serif; font-weight:700; font-size:1.15rem;
+  }
+  .nav-logo .dot{
+    width:10px; height:10px; border-radius:3px;
+    background: var(--grad-brand);
+    animation: dot-pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes dot-pulse{
+    0%,100%{ transform: rotate(0deg) scale(1); border-radius:3px;}
+    50%{ transform: rotate(90deg) scale(1.15); border-radius:50%;}
+  }
+  .nav-links{ display:flex; align-items:center; gap: 28px; font-size:.94rem; font-weight:500; }
+  .nav-links a{ color: var(--ink-soft); position:relative; padding: 4px 0; transition: color .25s; }
+  .nav-links a::after{
+    content:''; position:absolute; left:0; bottom:-2px; width:0; height:2px;
+    background: var(--accent); transition: width .3s var(--ease);
+  }
+  .nav-links a:hover{ color: var(--ink); }
+  .nav-links a:hover::after{ width:100%; }
+  .nav-cta{
+    background: var(--ink); color:#fff !important; padding:9px 18px; border-radius: 999px;
+    font-size:.88rem; font-weight:600;
+  }
+  .nav-cta::after{ display:none; }
+  .nav-cta:hover{ background: var(--accent-dark); transform: translateY(-1px); }
+
+  @media (max-width: 720px){
+    .nav-links a:not(.nav-cta){ display:none; }
+  }
+
+  /* ============================================================
+     HERO
+     ============================================================ */
+  .hero{
+    position: relative;
+    padding: 168px 0 120px;
+    overflow: hidden;
+  }
+  .blobs{ position:absolute; inset:0; z-index:0; pointer-events:none; }
+  .blob{
+    position:absolute; border-radius:50%;
+    filter: blur(60px); opacity:.55;
+    will-change: transform;
+  }
+  .blob-a{
+    width:480px; height:480px; top:-160px; right:-120px;
+    background: radial-gradient(circle at 30% 30%, var(--accent), transparent 70%);
+    animation: float-a 16s ease-in-out infinite;
+  }
+  .blob-b{
+    width:380px; height:380px; top:120px; left:-140px;
+    background: radial-gradient(circle at 60% 40%, var(--teal), transparent 70%);
+    animation: float-b 20s ease-in-out infinite;
+  }
+  .blob-c{
+    width:300px; height:300px; bottom:-120px; right:20%;
+    background: radial-gradient(circle at 50% 50%, var(--coral), transparent 70%);
+    opacity:.35;
+    animation: float-c 18s ease-in-out infinite;
+  }
+  @keyframes float-a{
+    0%,100%{ transform: translate(0,0) scale(1); }
+    50%{ transform: translate(-40px, 50px) scale(1.08); }
+  }
+  @keyframes float-b{
+    0%,100%{ transform: translate(0,0) scale(1); }
+    50%{ transform: translate(50px, -30px) scale(1.05); }
+  }
+  @keyframes float-c{
+    0%,100%{ transform: translate(0,0) scale(1); }
+    50%{ transform: translate(-30px, -40px) scale(1.12); }
+  }
+
+  .hero-inner{
+    position:relative; z-index:1;
+    max-width: 1120px; margin:0 auto; padding: 0 28px;
+    display:grid; grid-template-columns: 1.15fr .85fr; gap: 56px; align-items:center;
+  }
+  @media (max-width: 900px){
+    .hero-inner{ grid-template-columns: 1fr; }
+  }
+
+  .reveal{ opacity:0; transform: translateY(26px); }
+  .reveal.is-in{
+    animation: reveal-up .8s var(--ease) forwards;
+  }
+  @keyframes reveal-up{ to{ opacity:1; transform: translateY(0); } }
+
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    font-size:.78rem; font-weight:600; letter-spacing:.09em; text-transform:uppercase;
+    color: var(--accent-dark);
+    background: var(--accent-soft);
+    padding: 7px 14px; border-radius: 999px;
+    margin-bottom: 22px;
+  }
+  .eyebrow .pulse{
+    width:7px; height:7px; border-radius:50%; background: var(--teal);
+    box-shadow: 0 0 0 0 rgba(0,194,168,.6);
+    animation: ping 1.8s ease-out infinite;
+  }
+  @keyframes ping{
+    0%{ box-shadow: 0 0 0 0 rgba(0,194,168,.55); }
+    70%{ box-shadow: 0 0 0 8px rgba(0,194,168,0); }
+    100%{ box-shadow: 0 0 0 0 rgba(0,194,168,0); }
+  }
+
+  .hero-title{
+    font-size: clamp(2.3rem, 5vw, 3.6rem);
+    font-weight: 700;
+    line-height: 1.06;
+    margin-bottom: 20px;
+  }
+  .hero-title .accent-word{
+    background: var(--grad-brand);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    background-size: 200% auto;
+    animation: sheen 6s linear infinite;
+  }
+  @keyframes sheen{
+    0%{ background-position: 0% center; }
+    100%{ background-position: 200% center; }
+  }
+
+  .hero-sub{
+    color: var(--ink-soft);
+    font-size: 1.08rem;
+    max-width: 46ch;
+    margin-bottom: 36px;
+  }
+
+  /* download button — signature element */
+  .download-block{ display:flex; flex-direction:column; gap:14px; align-items:flex-start; }
+  .btn-download{
+    position: relative;
+    display:inline-flex; align-items:center; gap:16px;
+    background: var(--ink);
+    color:#fff;
+    padding: 16px 26px;
+    border-radius: 16px;
+    overflow:hidden;
+    box-shadow: var(--shadow-md);
+    transition: transform .35s var(--ease), box-shadow .35s var(--ease);
+    isolation:isolate;
+  }
+  .btn-download:hover{
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+  }
+  .btn-download:active{ transform: translateY(-1px) scale(.99); }
+  .btn-fill{
+    position:absolute; inset:0; left:0;
+    width:0%;
+    background: var(--grad-brand);
+    z-index:-1;
+    transition: width .8s var(--ease);
+  }
+  .btn-download.is-filling .btn-fill{ width:100%; }
+  .btn-icon{
+    width:38px; height:38px; border-radius:11px;
+    background: rgba(255,255,255,0.12);
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink:0;
+  }
+  .btn-icon svg{ width:18px; height:18px; }
+  .btn-icon .arrow{ transition: transform .35s var(--ease); }
+  .btn-download:hover .btn-icon .arrow{ transform: translateY(3px); }
+  .btn-text{ display:flex; flex-direction:column; gap:1px; text-align:left; }
+  .btn-text strong{ font-size:1.02rem; font-weight:700; }
+  .btn-text small{
+    font-family:'JetBrains Mono', monospace; font-size:.76rem; opacity:.75;
+  }
+  .hero-meta{
+    display:flex; align-items:center; gap:10px;
+    font-size:.85rem; color: var(--ink-faint);
+    font-family:'JetBrains Mono', monospace;
+    padding-left: 4px;
+  }
+  .hero-meta .sep{ opacity:.5; }
+  .badge-android{
+    display:inline-flex; align-items:center; gap:6px;
+    color: var(--teal); font-weight:600;
+  }
+
+  /* phone mockup */
+  .phone-wrap{
+    position:relative; display:flex; justify-content:center;
+    animation: bob 5.5s ease-in-out infinite;
+  }
+  @keyframes bob{
+    0%,100%{ transform: translateY(0) rotate(-2deg); }
+    50%{ transform: translateY(-16px) rotate(1.5deg); }
+  }
+  .phone{
+    width:230px; height:470px;
+    background: var(--surface);
+    border-radius: 42px;
+    border: 8px solid var(--ink);
+    box-shadow: var(--shadow-lg), 0 0 0 1px rgba(255,255,255,.4) inset;
+    position:relative; overflow:hidden;
+  }
+  .phone::before{
+    content:''; position:absolute; top:0; left:50%; transform:translateX(-50%);
+    width:70px; height:20px; background: var(--ink); border-radius: 0 0 14px 14px;
+  }
+  .phone-screen{
+    position:absolute; inset:0; top:22px;
+    background: linear-gradient(160deg, var(--accent-soft), #fff 60%);
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px;
+  }
+  .app-icon{
+    width:74px; height:74px; border-radius:20px;
+    background: var(--grad-brand);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Space Grotesk', sans-serif; font-weight:700; color:#fff; font-size:1.6rem;
+    box-shadow: var(--shadow-md);
+    animation: icon-float 3.2s ease-in-out infinite;
+  }
+  @keyframes icon-float{
+    0%,100%{ transform: translateY(0) scale(1); }
+    50%{ transform: translateY(-6px) scale(1.04); }
+  }
+  .phone-app-name{ font-size:.85rem; font-weight:600; color: var(--ink-soft); }
+  .phone-progress{
+    width: 60%; height:6px; border-radius:99px; background: var(--line); overflow:hidden;
+  }
+  .phone-progress span{
+    display:block; height:100%; width:40%; border-radius:99px;
+    background: var(--grad-brand);
+    animation: bar-load 2.2s ease-in-out infinite;
+  }
+  @keyframes bar-load{
+    0%{ width:10%; transform:translateX(0%); }
+    50%{ width:70%; }
+    100%{ width:10%; transform:translateX(220%); }
+  }
+  @media (max-width:900px){ .phone-wrap{ margin-top: 20px; } }
+
+  /* ============================================================
+     STATS
+     ============================================================ */
+  .stats{
+    border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+    background: var(--surface);
+  }
+  .stats-inner{
+    display:grid; grid-template-columns: repeat(3,1fr);
+    padding: 40px 0;
+  }
+  .stat{ text-align:center; padding: 0 16px; position:relative; }
+  .stat:not(:last-child)::after{
+    content:''; position:absolute; right:0; top:10%; height:80%; width:1px; background: var(--line);
+  }
+  .stat-num{
+    display:block; font-family:'Space Grotesk',sans-serif; font-weight:700;
+    font-size: clamp(1.7rem, 3.4vw, 2.4rem); color: var(--accent-dark);
+  }
+  .stat-label{ font-size:.85rem; color: var(--ink-faint); font-weight:500; }
+
+  /* ============================================================
+     FEATURES
+     ============================================================ */
+  .section{ padding: 110px 0; }
+  .section-head{ max-width: 640px; margin-bottom: 56px; }
+  .section-eyebrow{
+    font-size:.8rem; font-weight:600; letter-spacing:.08em; text-transform:uppercase;
+    color: var(--teal); margin-bottom:12px; display:block;
+  }
+  .section-title{ font-size: clamp(1.7rem, 3.6vw, 2.4rem); margin-bottom:14px; }
+  .section-sub{ color: var(--ink-soft); font-size:1.03rem; }
+
+  .feature-grid{
+    display:grid; grid-template-columns: repeat(3, 1fr); gap: 22px;
+  }
+  @media (max-width:900px){ .feature-grid{ grid-template-columns: 1fr; } }
+  .feature-card{
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 30px 26px;
+    transition: transform .4s var(--ease), box-shadow .4s var(--ease), border-color .4s;
+  }
+  .feature-card:hover{
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-md);
+    border-color: transparent;
+  }
+  .feature-icon{
+    width:48px; height:48px; border-radius:13px;
+    display:flex; align-items:center; justify-content:center;
+    background: var(--accent-soft); color: var(--accent-dark);
+    margin-bottom: 18px;
+    transition: transform .4s var(--ease), background .4s;
+  }
+  .feature-card:hover .feature-icon{
+    background: var(--grad-brand); color:#fff;
+    transform: rotate(-8deg) scale(1.08);
+  }
+  .feature-icon svg{ width:22px; height:22px; }
+  .feature-card h3{ font-size:1.1rem; margin-bottom:8px; }
+  .feature-card p{ color: var(--ink-soft); font-size:.94rem; margin:0; }
+
+  /* ============================================================
+     VERSIONS
+     ============================================================ */
+  .versions{ background: var(--bg-alt); }
+  .version-toolbar{
+    display:flex; align-items:center; justify-content:space-between; margin-bottom: 26px; gap:16px; flex-wrap:wrap;
+  }
+  .version-status{
+    font-size:.85rem; color: var(--ink-faint); font-family:'JetBrains Mono', monospace;
+  }
+  .version-grid{ display:flex; flex-direction:column; gap:14px; }
+
+  .version-card{
+    display:flex; align-items:center; justify-content:space-between; gap: 20px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    padding: 18px 22px;
+    flex-wrap: wrap;
+    transition: transform .35s var(--ease), box-shadow .35s var(--ease), border-color .35s;
+  }
+  .version-card:hover{
+    transform: translateX(6px);
+    box-shadow: var(--shadow-sm);
+    border-color: var(--accent);
+  }
+  .version-card.is-latest{
+    border-color: var(--accent);
+    background: linear-gradient(0deg, #fff, #fff), var(--grad-brand);
+    background-origin: border-box;
+    box-shadow: 0 0 0 1px var(--accent-soft);
+  }
+  .version-left{ display:flex; align-items:center; gap:16px; }
+  .version-tag{
+    font-family:'JetBrains Mono', monospace; font-weight:600; font-size:1.02rem;
+    color: var(--ink);
+    background: var(--bg-alt);
+    padding: 7px 14px; border-radius: 10px;
+    min-width: 92px; text-align:center;
+  }
+  .is-latest .version-tag{ background: var(--accent-soft); color: var(--accent-dark); }
+  .version-info{ display:flex; flex-direction:column; gap:2px; }
+  .version-file{ font-size:.82rem; color: var(--ink-faint); font-family:'JetBrains Mono', monospace; }
+  .version-size{ font-size:.82rem; color: var(--ink-faint); }
+  .latest-pill{
+    font-size:.68rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
+    background: var(--grad-warm); color:#fff; padding:3px 9px; border-radius:99px;
+  }
+  .btn-small{
+    display:inline-flex; align-items:center; gap:8px;
+    background: var(--ink); color:#fff;
+    padding: 10px 18px; border-radius: 10px;
+    font-size:.88rem; font-weight:600;
+    transition: background .3s, transform .3s var(--ease);
+  }
+  .btn-small:hover{ background: var(--accent-dark); transform: translateY(-2px); }
+  .btn-small svg{ width:15px; height:15px; }
+
+  .skeleton{
+    height: 68px; border-radius: var(--radius-sm);
+    background: linear-gradient(100deg, var(--surface) 30%, var(--bg-alt) 50%, var(--surface) 70%);
+    background-size: 220% 100%;
+    animation: shimmer 1.4s ease-in-out infinite;
+  }
+  @keyframes shimmer{
+    0%{ background-position: 200% 0; }
+    100%{ background-position: -20% 0; }
+  }
+
+  .empty-state, .error-state{
+    text-align:center; padding: 48px 20px; color: var(--ink-faint);
+    border: 1px dashed var(--line); border-radius: var(--radius-sm);
+    font-size:.92rem;
+  }
+  .error-state code{
+    background: var(--bg-alt); padding:2px 6px; border-radius:6px; font-size:.85em;
+  }
+
+  /* ============================================================
+     FOOTER
+     ============================================================ */
+  footer{
+    padding: 50px 0 40px;
+    border-top: 1px solid var(--line);
+    background: var(--surface);
+  }
+  .footer-inner{
+    display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px;
+  }
+  .footer-brand{ font-family:'Space Grotesk',sans-serif; font-weight:700; }
+  .footer-note{ font-size:.85rem; color: var(--ink-faint); }
+  .footer-links{ display:flex; gap:20px; font-size:.88rem; color: var(--ink-soft); }
+  .footer-links a:hover{ color: var(--accent-dark); }
+
+  /* stagger helper */
+  .stagger > *{ opacity:0; transform: translateY(22px); }
+  .stagger.is-in > *{ animation: reveal-up .7s var(--ease) forwards; }
+  .stagger.is-in > *:nth-child(1){ animation-delay: .02s; }
+  .stagger.is-in > *:nth-child(2){ animation-delay: .10s; }
+  .stagger.is-in > *:nth-child(3){ animation-delay: .18s; }
+  .stagger.is-in > *:nth-child(4){ animation-delay: .26s; }
+  .stagger.is-in > *:nth-child(5){ animation-delay: .34s; }
+  .stagger.is-in > *:nth-child(6){ animation-delay: .42s; }
+</style>
+</head>
+<body>
+
+<nav class="nav" id="mainNav">
+  <div class="container nav-inner">
+    <div class="nav-logo">
+      <span class="dot"></span>
+      <span id="navAppName">App</span>
+    </div>
+    <div class="nav-links">
+      <a href="#features">Funktionen</a>
+      <a href="#versions">Versionen</a>
+      <a class="nav-cta" href="#download">Download</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="blobs">
+    <div class="blob blob-a" data-depth="0.02"></div>
+    <div class="blob blob-b" data-depth="0.035"></div>
+    <div class="blob blob-c" data-depth="0.05"></div>
+  </div>
+
+  <div class="hero-inner">
+    <div>
+      <span class="eyebrow reveal is-in"><span class="pulse"></span> Für Android</span>
+      <h1 class="hero-title reveal is-in" style="animation-delay:.06s">
+        Hol dir <span class="accent-word" id="heroAppName">App</span> —<br>direkt als APK
+      </h1>
+      <p class="hero-sub reveal is-in" style="animation-delay:.14s">
+        Keine Umwege über den Store. Lade die aktuelle Version direkt von hier herunter
+        und installiere sie in wenigen Sekunden.
+      </p>
+
+      <div class="download-block reveal is-in" id="download" style="animation-delay:.22s">
+        <a href="#" id="mainDownloadBtn" class="btn-download" download>
+          <span class="btn-fill"></span>
+          <span class="btn-icon">
+            <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 3v14"></path><path d="M6 11l6 6 6-6"></path><path d="M5 21h14"></path>
+            </svg>
+          </span>
+          <span class="btn-text">
+            <strong><span id="btnAppName">App</span> herunterladen</strong>
+            <small id="btnVersion">Version wird geladen …</small>
+          </span>
+        </a>
+        <div class="hero-meta">
+          <span class="badge-android">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.6 9.48l1.84-3.18c.16-.31.04-.69-.26-.85a.6.6 0 0 0-.83.22l-1.88 3.24a11.43 11.43 0 0 0-8.94 0L5.65 5.67a.6.6 0 0 0-.83-.22c-.3.16-.42.54-.26.85L6.4 9.48C3.3 11.25 1.28 14.44 1 18h22c-.28-3.56-2.3-6.75-5.4-8.52M7 15.25a1.25 1.25 0 1 1 0-2.5 1.25 1.25 0 0 1 0 2.5m10 0a1.25 1.25 0 1 1 0-2.5 1.25 1.25 0 0 1 0 2.5"/></svg>
+            Android APK
+          </span>
+          <span class="sep">·</span>
+          <span id="heroSize">– MB</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="phone-wrap reveal is-in" style="animation-delay:.3s">
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="app-icon" id="phoneIconLetter">A</div>
+          <div class="phone-app-name" id="phoneAppName">App</div>
+          <div class="phone-progress"><span></span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section class="stats">
+  <div class="container stats-inner stagger" id="statsRow">
+    <div class="stat">
+      <span class="stat-num" data-count-target="0" id="statVersions">0</span>
+      <span class="stat-label">Verfügbare Versionen</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num mono" id="statLatest">–</span>
+      <span class="stat-label">Aktuelle Version</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num mono" id="statSize">–</span>
+      <span class="stat-label">Downloadgröße</span>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="features">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="section-eyebrow">Funktionen</span>
+      <h2 class="section-title">Warum <span id="featuresAppName">App</span>?</h2>
+      <p class="section-sub">Passe diese drei Punkte an die echten Stärken deiner App an.</p>
+    </div>
+    <div class="feature-grid stagger">
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7z"/></svg>
+        </div>
+        <h3>Schnell &amp; schlank</h3>
+        <p>Kleine Installationsgröße, geringer Ressourcenverbrauch, flüssige Bedienung.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <h3>Direkt &amp; sicher</h3>
+        <p>Jede APK stammt direkt aus diesem Repository — nachvollziehbar und transparent.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20v-6M6 20V10M18 20V4"/></svg>
+        </div>
+        <h3>Immer aktuell</h3>
+        <p>Alle Versionen bleiben abrufbar — ältere Stände lassen sich jederzeit erneut laden.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section versions" id="versions">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="section-eyebrow">Verlauf</span>
+      <h2 class="section-title">Versionsübersicht</h2>
+      <p class="section-sub">Alle bisher veröffentlichten APKs, automatisch erkannt anhand der Dateinamen im Repository.</p>
+    </div>
+
+    <div class="version-toolbar reveal">
+      <span class="version-status" id="versionStatus">Lade Versionen …</span>
+    </div>
+
+    <div class="version-grid" id="versionList">
+      <div class="skeleton"></div>
+      <div class="skeleton"></div>
+      <div class="skeleton"></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container footer-inner">
+    <span class="footer-brand" id="footerAppName">App</span>
+    <span class="footer-note">Diese Seite listet APK-Dateien automatisch anhand ihres Dateinamens im Repository.</span>
+    <div class="footer-links">
+      <a href="#top">Nach oben</a>
+      <a id="footerRepoLink" href="#" target="_blank" rel="noopener">GitHub Repository</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ================================================================
+   KONFIGURATION — HIER ANPASSEN
+   ================================================================
+   APP_NAME        : Der Name deiner App. Wird überall auf der Seite
+                      angezeigt und muss dem Präfix deiner APK-Dateien
+                      entsprechen: "APP_NAME-VERSION.apk"
+                      Beispiel: "MeineApp-1.2.0.apk"
+
+   GITHUB_OWNER     : Dein GitHub-Benutzername (oder Organisation)
+   GITHUB_REPO      : Der Name des Repositories, in dem index.html
+                      und die .apk-Dateien liegen
+   GITHUB_BRANCH    :  Der Branch, in dem die Dateien liegen (meist "main")
+
+   Damit die automatische Erkennung funktioniert, muss die Seite über
+   GitHub Pages (oder einen anderen Host desselben Repos) laufen und
+   GITHUB_OWNER/GITHUB_REPO müssen korrekt gesetzt sein.
+
+   MANUAL_APK_FILES : Optionaler manueller Fallback. Wird nur verwendet,
+                      wenn die automatische GitHub-Erkennung fehlschlägt
+                      (z.B. kein Internetzugriff auf die GitHub-API,
+                      privates Repo, oder lokal getestet ohne Netzwerk).
+                      Einfach die Dateinamen eintragen, die im selben
+                      Ordner wie index.html liegen.
+   ================================================================ */
+  const APP_NAME        = "Movie_Watcher-1.0.apk";          // <-- Name deiner App eintragen
+  const GITHUB_OWNER    = "Ferdi087";  // <-- GitHub-Benutzername eintragen
+  const GITHUB_REPO     = "Movie_watcher";    // <-- Repository-Name eintragen
+  const GITHUB_BRANCH   = "main";              // <-- Branch eintragen
+
+  const MANUAL_APK_FILES = [
+    // "MeineApp-1.0.0.apk",
+    // "MeineApp-1.1.0.apk",
+  ];
+
+/* ================================================================
+   Ab hier keine Anpassungen mehr nötig
+   ================================================================ */
+
+  // -------- Namen überall einsetzen --------
+  document.title = APP_NAME + " · Download";
+  [
+    ["navAppName", APP_NAME],
+    ["heroAppName", APP_NAME],
+    ["btnAppName", APP_NAME],
+    ["phoneAppName", APP_NAME],
+    ["featuresAppName", APP_NAME],
+    ["footerAppName", APP_NAME],
+  ].forEach(([id, val]) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = val;
+  });
+  const iconLetterEl = document.getElementById("phoneIconLetter");
+  if (iconLetterEl) iconLetterEl.textContent = (APP_NAME.trim()[0] || "A").toUpperCase();
+
+  const repoLinkEl = document.getElementById("footerRepoLink");
+  if (repoLinkEl) repoLinkEl.href = `https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}`;
+
+  // -------- Hilfsfunktionen --------
+  function escapeRegExp(str){
+    return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  }
+
+  function formatBytes(bytes){
+    if (bytes == null || isNaN(bytes)) return "–";
+    if (bytes < 1024) return bytes + " B";
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
+    return (bytes / (1024 * 1024)).toFixed(1) + " MB";
+  }
+
+  function parseVersionParts(v){
+    return v.split(/[.\-_]/).map(p => {
+      const n = parseInt(p, 10);
+      return isNaN(n) ? p.toLowerCase() : n;
+    });
+  }
+
+  function compareVersions(a, b){
+    const pa = parseVersionParts(a);
+    const pb = parseVersionParts(b);
+    const len = Math.max(pa.length, pb.length);
+    for (let i = 0; i < len; i++){
+      const x = pa[i], y = pb[i];
+      if (x === undefined) return -1;
+      if (y === undefined) return 1;
+      if (typeof x === "number" && typeof y === "number"){
+        if (x !== y) return x - y;
+      } else {
+        const sx = String(x), sy = String(y);
+        if (sx !== sy) return sx < sy ? -1 : 1;
+      }
+    }
+    return 0;
+  }
+
+  function apkRegex(){
+    return new RegExp("^" + escapeRegExp(APP_NAME.trim()) + "-(.+)\\.apk$", "i");
+  }
+
+  function buildEntry(filename, sizeBytes){
+    const m = filename.match(apkRegex());
+    if (!m) return null;
+    return { filename, version: m[1], size: sizeBytes };
+  }
+
+  // -------- Versionsdaten laden --------
+  async function loadFromGitHub(){
+    const placeholder = GITHUB_OWNER === "dein-github-name" || GITHUB_REPO === "dein-repo-name";
+    if (placeholder) throw new Error("GitHub-Konfiguration wurde noch nicht angepasst.");
+
+    const url = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/?ref=${encodeURIComponent(GITHUB_BRANCH)}`;
+    const res = await fetch(url, { headers: { "Accept": "application/vnd.github+json" } });
+    if (!res.ok) throw new Error("GitHub-API antwortete mit Status " + res.status);
+    const data = await res.json();
+    if (!Array.isArray(data)) throw new Error("Unerwartete Antwort der GitHub-API.");
+
+    const entries = data
+      .filter(item => item.type === "file")
+      .map(item => buildEntry(item.name, item.size))
+      .filter(Boolean);
+
+    return entries;
+  }
+
+  function loadFromManualList(){
+    return MANUAL_APK_FILES
+      .map(name => buildEntry(name, null))
+      .filter(Boolean);
+  }
+
+  async function loadApkEntries(){
+    try {
+      const entries = await loadFromGitHub();
+      if (entries.length > 0) return { entries, source: "github" };
+      // GitHub erreichbar, aber keine passenden Dateien gefunden -> Fallback prüfen
+      const manual = loadFromManualList();
+      return { entries: manual, source: manual.length ? "manual" : "github-empty" };
+    } catch (err) {
+      const manual = loadFromManualList();
+      if (manual.length > 0) return { entries: manual, source: "manual" };
+      return { entries: [], source: "error", error: err };
+    }
+  }
+
+  // -------- Rendering --------
+  function renderVersions(entries, source, error){
+    const listEl = document.getElementById("versionList");
+    const statusEl = document.getElementById("versionStatus");
+    const mainBtn = document.getElementById("mainDownloadBtn");
+    const btnVersionEl = document.getElementById("btnVersion");
+    const heroSizeEl = document.getElementById("heroSize");
+    const statVersionsEl = document.getElementById("statVersions");
+    const statLatestEl = document.getElementById("statLatest");
+    const statSizeEl = document.getElementById("statSize");
+
+    if (entries.length === 0){
+      listEl.innerHTML = "";
+      const box = document.createElement("div");
+      if (source === "error"){
+        box.className = "error-state";
+        box.innerHTML = `Konnte APK-Dateien nicht automatisch laden.<br>
+          Bitte prüfe <code>GITHUB_OWNER</code> / <code>GITHUB_REPO</code> im Script-Teil von <code>index.html</code>,
+          oder trage Dateinamen manuell in <code>MANUAL_APK_FILES</code> ein.`;
+      } else {
+        box.className = "empty-state";
+        box.textContent = `Es wurden noch keine Dateien im Format "${APP_NAME}-VERSION.apk" gefunden.`;
+      }
+      listEl.appendChild(box);
+      statusEl.textContent = "Keine Versionen gefunden";
+      btnVersionEl.textContent = "Keine Version verfügbar";
+      mainBtn.removeAttribute("href");
+      mainBtn.style.opacity = ".55";
+      mainBtn.style.pointerEvents = "none";
+      heroSizeEl.textContent = "– MB";
+      statVersionsEl.textContent = "0";
+      statLatestEl.textContent = "–";
+      statSizeEl.textContent = "–";
+      return;
+    }
+
+    entries.sort((a, b) => compareVersions(b.version, a.version));
+    const latest = entries[0];
+
+    // Hero / main button
+    mainBtn.href = encodeURIComponent(latest.filename);
+    mainBtn.setAttribute("download", latest.filename);
+    btnVersionEl.textContent = "Version " + latest.version;
+    heroSizeEl.textContent = latest.size != null ? formatBytes(latest.size) : "APK-Datei";
+    mainBtn.style.opacity = "";
+    mainBtn.style.pointerEvents = "";
+
+    // Stats
+    statVersionsEl.setAttribute("data-count-target", entries.length);
+    statLatestEl.textContent = "v" + latest.version;
+    statSizeEl.textContent = latest.size != null ? formatBytes(latest.size) : "–";
+
+    // Status line
+    const sourceLabel = source === "github" ? "automatisch von GitHub erkannt" : "aus manueller Liste geladen";
+    statusEl.textContent = `${entries.length} Version${entries.length === 1 ? "" : "en"} · ${sourceLabel}`;
+
+    // Version list
+    listEl.innerHTML = "";
+    entries.forEach((entry, i) => {
+      const card = document.createElement("div");
+      card.className = "version-card" + (i === 0 ? " is-latest" : "");
+      card.innerHTML = `
+        <div class="version-left">
+          <span class="version-tag">v${entry.version}</span>
+          <div class="version-info">
+            <span class="version-file">${entry.filename}</span>
+            <span class="version-size">${entry.size != null ? formatBytes(entry.size) : "Größe unbekannt"}</span>
+          </div>
+          ${i === 0 ? '<span class="latest-pill">Neueste</span>' : ""}
+        </div>
+        <a class="btn-small" href="${encodeURIComponent(entry.filename)}" download="${entry.filename}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3v14"></path><path d="M6 11l6 6 6-6"></path><path d="M5 21h14"></path>
+          </svg>
+          Download
+        </a>
+      `;
+      listEl.appendChild(card);
+    });
+
+    // Animierte Zähler starten, sobald sichtbar
+    observeCounters();
+  }
+
+  loadApkEntries().then(({ entries, source, error }) => {
+    renderVersions(entries, source, error);
+  });
+
+  // -------- Download-Button: Fortschritts-Animation --------
+  document.getElementById("mainDownloadBtn").addEventListener("click", function(e){
+    const href = this.getAttribute("href");
+    if (!href) { e.preventDefault(); return; }
+    e.preventDefault();
+    const btn = this;
+    if (btn.classList.contains("is-filling")) return;
+    btn.classList.add("is-filling");
+    const filename = btn.getAttribute("download");
+    setTimeout(() => {
+      const tempLink = document.createElement("a");
+      tempLink.href = href;
+      tempLink.setAttribute("download", filename);
+      document.body.appendChild(tempLink);
+      tempLink.click();
+      document.body.removeChild(tempLink);
+      setTimeout(() => btn.classList.remove("is-filling"), 500);
+    }, 650);
+  });
+
+  // -------- Scroll-Reveal --------
+  const revealTargets = document.querySelectorAll(".reveal, .stagger");
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting){
+        entry.target.classList.add("is-in");
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  revealTargets.forEach(el => revealObserver.observe(el));
+
+  // -------- Animierte Zähler --------
+  let countersStarted = false;
+  function observeCounters(){
+    if (countersStarted) return;
+    const statsSection = document.querySelector(".stats");
+    if (!statsSection) return;
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && !countersStarted){
+          countersStarted = true;
+          animateCount(document.getElementById("statVersions"));
+          obs.disconnect();
+        }
+      });
+    }, { threshold: 0.4 });
+    obs.observe(statsSection);
+  }
+  function animateCount(el){
+    if (!el) return;
+    const target = parseInt(el.getAttribute("data-count-target") || "0", 10);
+    if (!target){ el.textContent = "0"; return; }
+    const duration = 900;
+    const start = performance.now();
+    function step(now){
+      const progress = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      el.textContent = Math.round(eased * target);
+      if (progress < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  // -------- Nav: Schrumpfen beim Scrollen --------
+  const navEl = document.getElementById("mainNav");
+  window.addEventListener("scroll", () => {
+    navEl.classList.toggle("is-scrolled", window.scrollY > 30);
+  }, { passive: true });
+
+  // -------- Ambient Parallax der Blobs (Mausbewegung) --------
+  const blobEls = document.querySelectorAll(".blob");
+  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (!prefersReducedMotion){
+    window.addEventListener("mousemove", (e) => {
+      const cx = window.innerWidth / 2;
+      const cy = window.innerHeight / 2;
+      const dx = (e.clientX - cx);
+      const dy = (e.clientY - cy);
+      blobEls.forEach(blob => {
+        const depth = parseFloat(blob.getAttribute("data-depth")) || 0.02;
+        blob.style.transform = `translate(${dx * depth}px, ${dy * depth}px)`;
+      });
+    }, { passive: true });
+  }
+</script>
+</body>
+</html>
