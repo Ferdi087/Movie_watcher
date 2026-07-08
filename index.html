@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Movie_watcher Download</title>
+<title>App Download</title>
 <meta name="description" content="Offizielle Download-Seite mit allen Versionen zum direkten Herunterladen.">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -673,7 +673,7 @@
    GITHUB_OWNER     : Dein GitHub-Benutzername (oder Organisation)
    GITHUB_REPO      : Der Name des Repositories, in dem index.html
                       und die .apk-Dateien liegen
-   GITHUB_BRANCH    :  Der Branch, in dem die Dateien liegen (meist "main")
+   GITHUB_BRANCH    : Der Branch, in dem die Dateien liegen (meist "main")
 
    Damit die automatische Erkennung funktioniert, muss die Seite über
    GitHub Pages (oder einen anderen Host desselben Repos) laufen und
@@ -686,14 +686,14 @@
                       Einfach die Dateinamen eintragen, die im selben
                       Ordner wie index.html liegen.
    ================================================================ */
-  const APP_NAME        = "Movie_Watcher-1.0.apk";          // <-- Name deiner App eintragen
+  const APP_NAME        = "Movie_Watcher";     // <-- Name deiner App eintragen
   const GITHUB_OWNER    = "Ferdi087";  // <-- GitHub-Benutzername eintragen
-  const GITHUB_REPO     = "Movie_watcher";    // <-- Repository-Name eintragen
+  const GITHUB_REPO     = "Movie_Watcher";    // <-- Repository-Name eintragen
   const GITHUB_BRANCH   = "main";              // <-- Branch eintragen
 
   const MANUAL_APK_FILES = [
-     //"MeineApp-1.0.0.apk",
-     "Movie_watcher-1.0.apk",
+    // "MeineApp-1.0.0.apk",
+     "Movie_Watcher-1.0.apk",
   ];
 
 /* ================================================================
@@ -757,7 +757,9 @@
   }
 
   function apkRegex(){
-    return new RegExp("^" + escapeRegExp(APP_NAME.trim()) + "-(.+)\\.apk$", "i");
+    // Striktes Format: Name-Version.apk
+    // Version darf nur aus Ziffern und Punkten bestehen (z.B. 1.0, 2.3.1)
+    return new RegExp("^" + escapeRegExp(APP_NAME.trim()) + "-(\\d+(?:\\.\\d+)*)\\.apk$", "i");
   }
 
   function buildEntry(filename, sizeBytes){
