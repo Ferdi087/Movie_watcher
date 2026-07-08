@@ -1,10 +1,22 @@
-# Movie_watcher
-erstellt von ferdiannd. -- dieses projekt hat mich ungefaehr 5$ (version 1.0) gekostet und eine menge zeit--
+# Movie Watcher
 
-#license
+**Created by Ferdinand**
 
-Copyright (c) 2026 Ferdinand
+Trailer Watcher is a personal project developed with a significant investment of time and approximately **$5** in development costs for **Version 1.0**.
 
-Permission is granted to use this software for personal, non-commercial purposes only.
+## License
 
-You may not modify, distribute modified versions, sublicense, or use this software for any commercial purpose without prior written permission.
+This project is available for **personal, non-commercial use only**.
+
+You may:
+
+* Use the software for personal purposes.
+
+You may **not**:
+
+* Modify the software.
+* Distribute modified versions.
+* Sublicense the software.
+* Use the software for any commercial purpose.
+
+© 2026 Ferdinand. All rights reserved.
