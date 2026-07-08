@@ -1059,6 +1059,11 @@
   loadEntries().then(({ apkEntries, exeEntries, apkSource, exeSource }) => {
     renderVersions(apkEntries, apkSource);
     console.log(exeEntries);
+    console.log({
+     wrap: document.getElementById("pcDownloadWrap"),
+     section: document.getElementById("pc-versions"),
+     nav: document.getElementById("navPcLink")
+              });
     renderPcVersions(exeEntries, exeSource);
   });
 
