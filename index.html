@@ -1058,6 +1058,7 @@
 
   loadEntries().then(({ apkEntries, exeEntries, apkSource, exeSource }) => {
     renderVersions(apkEntries, apkSource);
+    console.log(exeEntries);
     renderPcVersions(exeEntries, exeSource);
   });
 
