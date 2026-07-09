@@ -527,6 +527,51 @@
   .footer-inner{
     display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px;
   }
+  .footer-access{
+    display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+    padding: 12px 14px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: var(--bg-alt);
+  }
+  .footer-access-label{
+    display:flex; flex-direction:column; gap:2px;
+    min-width: 170px;
+  }
+  .footer-access-label strong{
+    font-size:.82rem;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+  }
+  .footer-access-label span{
+    font-size:.78rem;
+    color: var(--ink-faint);
+  }
+  .footer-access-input{
+    min-width: 170px;
+    padding: 11px 14px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--surface);
+    color: var(--ink);
+    font: inherit;
+  }
+  .footer-access-input::placeholder{ color: var(--ink-faint); }
+  .footer-access-input:focus{
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(91,95,239,.12);
+  }
+  .footer-access-btn{
+    border: 0;
+    cursor: pointer;
+  }
+  .footer-access-msg{
+    width: 100%;
+    font-size: .82rem;
+    color: var(--ink-faint);
+  }
+  .footer-access-msg.is-error{ color: var(--coral); }
   .footer-brand{ font-family:'Space Grotesk',sans-serif; font-weight:700; }
   .footer-note{ font-size:.85rem; color: var(--ink-faint); }
   .footer-links{ display:flex; gap:20px; font-size:.88rem; color: var(--ink-soft); }
@@ -730,6 +775,15 @@
   <div class="container footer-inner">
     <span class="footer-brand" id="footerAppName">App</span>
     <span class="footer-note">Diese Seite listet APK- und EXE-Dateien automatisch anhand ihres Dateinamens im Repository.</span>
+    <form class="footer-access" id="earlyAccessForm" autocomplete="off">
+      <label class="footer-access-label" for="earlyAccessCode">
+        <strong>Early Access Zugangscode</strong>
+        <span>Nur mit freigeschaltetem Code geht es weiter.</span>
+      </label>
+      <input class="footer-access-input mono" id="earlyAccessCode" type="text" inputmode="text" spellcheck="false" placeholder="Code eingeben">
+      <button class="btn-small footer-access-btn" type="submit">Freischalten</button>
+      <div class="footer-access-msg" id="earlyAccessMsg" aria-live="polite"></div>
+    </form>
     <div class="footer-links">
       <a href="#top">Nach oben</a>
       <a id="footerRepoLink" href="#" target="_blank" rel="noopener">GitHub Repository</a>
@@ -774,6 +828,8 @@
   const GITHUB_OWNER    = "Ferdi087";  // <-- GitHub-Benutzername eintragen
   const GITHUB_REPO     = "Movie_Watcher";    // <-- Repository-Name eintragen
   const GITHUB_BRANCH   = "main";              // <-- Branch eintragen
+  const EARLY_ACCESS_CODE = "ea26wv";
+  const EARLY_ACCESS_TARGET = "app/index.html";
 
   const MANUAL_APK_FILES = [
     // "MeineApp-1.0.0.apk",
@@ -807,6 +863,35 @@
 
   const repoLinkEl = document.getElementById("footerRepoLink");
   if (repoLinkEl) repoLinkEl.href = `https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}`;
+
+  const accessForm = document.getElementById("earlyAccessForm");
+  const accessInput = document.getElementById("earlyAccessCode");
+  const accessMsg = document.getElementById("earlyAccessMsg");
+
+  function setAccessMessage(text, isError){
+    if (!accessMsg) return;
+    accessMsg.textContent = text;
+    accessMsg.classList.toggle("is-error", !!isError);
+  }
+
+  function unlockEarlyAccess(){
+    if (!accessInput) return;
+    const entered = accessInput.value.trim().toLowerCase();
+    if (entered === EARLY_ACCESS_CODE){
+      setAccessMessage("Code akzeptiert. Weiterleitung ...", false);
+      window.location.href = EARLY_ACCESS_TARGET;
+      return;
+    }
+    setAccessMessage("Code ist falsch.", true);
+    accessInput.select();
+  }
+
+  if (accessForm){
+    accessForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      unlockEarlyAccess();
+    });
+  }
 
   // -------- Hilfsfunktionen --------
   function escapeRegExp(str){
