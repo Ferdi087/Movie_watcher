@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#050505">
+  <title>Movie Watcher – Player</title>
+  <style>
+    :root { color-scheme: dark; }
+    * { box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; margin: 0; background: #050505; font-family: system-ui, sans-serif; }
+    .player-shell { position: fixed; inset: 0; display: grid; place-items: center; background: #050505; }
+    .player-frame { position: relative; width: min(100vw, calc(100vh * 16 / 9)); aspect-ratio: 16 / 9; background: #000; }
+    iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+    .back { position: fixed; z-index: 2; top: max(16px, env(safe-area-inset-top)); left: max(16px, env(safe-area-inset-left)); border: 0; border-radius: 999px; padding: 10px 14px; background: rgba(0,0,0,.66); color: #fff; font: inherit; cursor: pointer; }
+    .back:hover, .back:focus-visible { background: rgba(0,0,0,.9); outline: 2px solid #16A085; outline-offset: 2px; }
+    .error { max-width: 32rem; padding: 24px; color: #fff; text-align: center; line-height: 1.5; }
+  </style>
+</head>
+<body>
+  <button class="back" type="button" aria-label="Zurück zur Startseite" onclick="history.back()">← Zurück</button>
+  <main class="player-shell" id="player-shell" aria-live="polite"></main>
+  <script>
+    (() => {
+      const shell = document.getElementById('player-shell');
+      const params = new URLSearchParams(location.search);
+      const kind = params.get('kind');
+      const id = params.get('id');
+      const season = params.get('season');
+      const episode = params.get('episode');
+      const startAt = Number(params.get('startAt') || '0');
+      const validPositiveInteger = (value) => /^\d+$/.test(value || '') && Number(value) > 0;
+
+      if (!['movie', 'series'].includes(kind) || !validPositiveInteger(id) ||
+          (kind === 'series' && (!validPositiveInteger(season) || !validPositiveInteger(episode))) ||
+          !Number.isFinite(startAt) || startAt < 0) {
+        shell.innerHTML = '<p class="error">Der angeforderte Inhalt ist ungültig. Bitte gehe zurück und wähle einen Film oder eine Episode erneut aus.</p>';
+        return;
+      }
+
+      const providerParams = new URLSearchParams({
+        autoPlay: 'true',
+        title: 'true',
+        poster: 'true',
+        theme: '16A085',
+      });
+      if (startAt > 0) providerParams.set('startAt', String(Math.round(startAt)));
+      if (kind === 'series') {
+        providerParams.set('nextButton', 'true');
+        providerParams.set('autoNext', 'true');
+      }
+
+      const path = kind === 'movie' ? `/movie/${id}` : `/tv/${id}/${season}/${episode}`;
+      const iframe = document.createElement('iframe');
+      iframe.src = `https://vidfast.vc${path}?${providerParams}`;
+      iframe.title = 'Media player';
+      iframe.allow = 'encrypted-media';
+      iframe.allowFullscreen = true;
+      iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+
+      const frame = document.createElement('div');
+      frame.className = 'player-frame';
+      frame.appendChild(iframe);
+      shell.appendChild(frame);
+    })();
+  </script>
+</body>
+</html>
