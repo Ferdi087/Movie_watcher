@@ -26667,8 +26667,7 @@ r=s.style
 r.height="100%"
 r=s.style
 r.backgroundColor="black"
-s.allow="encrypted-media; fullscreen"
-s.setAttribute("sandbox","allow-scripts allow-forms allow-same-origin")
+s.allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
 $.aE8()
 $.xM().Bx("movie-player-iframe",new A.ayl(s),!0)
 $.aKk=!0},
