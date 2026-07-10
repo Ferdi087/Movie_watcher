@@ -297,6 +297,27 @@
   }
   .btn-download-pc.is-filling .btn-fill{ width:100%; }
 
+  /* Sekundärer iPhone-Download-Button (outline-Stil, Mint-Akzent) */
+  .btn-download-ios{
+    background: var(--surface);
+    color: var(--ink);
+    border: 1.5px solid var(--line);
+    box-shadow: var(--shadow-sm);
+  }
+  .btn-download-ios:hover{
+    border-color: var(--teal);
+    box-shadow: var(--shadow-md);
+  }
+  .btn-download-ios .btn-icon{
+    background: var(--accent-soft);
+    color: var(--teal);
+  }
+  .btn-download-ios .btn-fill{
+    background: linear-gradient(135deg, var(--teal), #4de6cf);
+    opacity: .16;
+  }
+  .btn-download-ios.is-filling .btn-fill{ width:100%; }
+
   .hero-meta{
     display:flex; align-items:center; gap:10px; flex-wrap: wrap;
     font-size:.85rem; color: var(--ink-faint);
@@ -309,6 +330,10 @@
     color: var(--teal); font-weight:600;
   }
   .badge-pc{ color: var(--coral); font-weight:600; }
+  .badge-ios{
+    display:inline-flex; align-items:center; gap:6px;
+    color: var(--teal); font-weight:600;
+  }
 
   /* phone mockup */
   .phone-wrap{
@@ -395,6 +420,7 @@
     color: var(--teal); margin-bottom:12px; display:block;
   }
   .section-eyebrow.is-pc{ color: var(--coral); }
+  .section-eyebrow.is-ios{ color: var(--teal); }
   .section-title{ font-size: clamp(1.7rem, 3.6vw, 2.4rem); margin-bottom:14px; }
   .section-sub{ color: var(--ink-soft); font-size:1.03rem; }
 
@@ -464,6 +490,9 @@
   .version-card.is-latest.is-pc{
     box-shadow: 0 0 0 1px rgba(255,122,89,.25);
   }
+  .version-card.is-latest.is-ios{
+    box-shadow: 0 0 0 1px rgba(0,194,168,.25);
+  }
   .version-left{ display:flex; align-items:center; gap:16px; }
   .version-tag{
     font-family:'JetBrains Mono', monospace; font-weight:600; font-size:1.02rem;
@@ -474,6 +503,7 @@
   }
   .is-latest .version-tag{ background: var(--accent-soft); color: var(--accent-dark); }
   .is-latest.is-pc .version-tag{ background: #FFF1EC; color: var(--coral); }
+  .is-latest.is-ios .version-tag{ background: #E6FBF7; color: var(--teal); }
   .version-info{ display:flex; flex-direction:column; gap:2px; }
   .version-file{ font-size:.82rem; color: var(--ink-faint); font-family:'JetBrains Mono', monospace; }
   .version-size{ font-size:.82rem; color: var(--ink-faint); }
@@ -515,6 +545,10 @@
   /* PC-Sektion ist per Default versteckt, bis EXE-Dateien gefunden wurden */
   #pc-versions{ display:none; }
   #pcDownloadWrap{ display:none; }
+
+  /* iOS-Sektion ist per Default versteckt, bis IPA-Dateien gefunden wurden */
+  #ios-versions{ display:none; }
+  #iosDownloadWrap{ display:none; }
 
   /* ============================================================
      FOOTER
@@ -600,6 +634,7 @@
       <a href="#features">Funktionen</a>
       <a href="#versions">Versionen</a>
       <a href="#pc-versions" id="navPcLink" style="display:none;">PC-Version</a>
+      <a href="#ios-versions" id="navIosLink" style="display:none;">iPhone-Version</a>
       <a class="nav-cta" href="#download">Download</a>
     </div>
   </div>
@@ -654,6 +689,22 @@
           </a>
         </div>
 
+        <!-- Erscheint nur automatisch, wenn eine .ipa-Datei im Repo gefunden wird -->
+        <div id="iosDownloadWrap">
+          <a href="#" id="iosDownloadBtn" class="btn-download btn-download-ios" download>
+            <span class="btn-fill"></span>
+            <span class="btn-icon">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.02 7.31c1.35.07 2.29.74 3.08.8.79.06 2.24-.99 3.77-.85 1.44.13 2.53.68 3.29 1.7-2.88 1.73-2.15 5.55.57 6.71-.61 1.32-1.4 2.63-2.68 4.61zM12.03 7.25c-.15-2.23 1.66-4.09 3.74-4.25.29 2.31-2.03 4.03-3.74 4.25z"/>
+              </svg>
+            </span>
+            <span class="btn-text">
+              <strong>iPhone-Version herunterladen</strong>
+              <small id="iosBtnVersion">Version wird geladen …</small>
+            </span>
+          </a>
+        </div>
+
         <div class="hero-meta">
           <span class="badge-android">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.6 9.48l1.84-3.18c.16-.31.04-.69-.26-.85a.6.6 0 0 0-.83.22l-1.88 3.24a11.43 11.43 0 0 0-8.94 0L5.65 5.67a.6.6 0 0 0-.83-.22c-.3.16-.42.54-.26.85L6.4 9.48C3.3 11.25 1.28 14.44 1 18h22c-.28-3.56-2.3-6.75-5.4-8.52M7 15.25a1.25 1.25 0 1 1 0-2.5 1.25 1.25 0 0 1 0 2.5m10 0a1.25 1.25 0 1 1 0-2.5 1.25 1.25 0 0 1 0 2.5"/></svg>
@@ -665,6 +716,11 @@
           <span class="badge-pc" id="badgePcAvailable" style="display:none;">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="13" rx="2"></rect><path d="M8 21h8M12 17v4"></path></svg>
             Auch für PC verfügbar
+          </span>
+          <span class="sep" id="iosSep" style="display:none;">·</span>
+          <span class="badge-ios" id="badgeIosAvailable" style="display:none;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.02 7.31c1.35.07 2.29.74 3.08.8.79.06 2.24-.99 3.77-.85 1.44.13 2.53.68 3.29 1.7-2.88 1.73-2.15 5.55.57 6.71-.61 1.32-1.4 2.63-2.68 4.61zM12.03 7.25c-.15-2.23 1.66-4.09 3.74-4.25.29 2.31-2.03 4.03-3.74 4.25z"/></svg>
+            Auch für iPhone verfügbar
           </span>
         </div>
       </div>
@@ -771,14 +827,33 @@
   </div>
 </section>
 
+<!-- Diese Sektion wird per JS eingeblendet, sobald mindestens eine .ipa-Datei gefunden wird -->
+<section class="section" id="ios-versions">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="section-eyebrow is-ios">iPhone-Verlauf</span>
+      <h2 class="section-title">Versionsübersicht (iPhone)</h2>
+      <p class="section-sub">Alle bisher veröffentlichten IPA-Dateien, automatisch erkannt anhand der Dateinamen im Repository.</p>
+    </div>
+
+    <div class="version-toolbar reveal">
+      <span class="version-status" id="iosVersionStatus">Lade iPhone-Versionen …</span>
+    </div>
+
+    <div class="version-grid" id="iosVersionList">
+      <div class="skeleton"></div>
+    </div>
+  </div>
+</section>
+
 <footer>
   <div class="container footer-inner">
     <span class="footer-brand" id="footerAppName">App</span>
-    <span class="footer-note">Diese Seite listet APK- und EXE-Dateien automatisch anhand ihres Dateinamens im Repository.</span>
+    <span class="footer-note">Diese Seite listet APK-, EXE- und IPA-Dateien automatisch anhand ihres Dateinamens im Repository.</span>
     <form class="footer-access" id="earlyAccessForm" autocomplete="off">
       <label class="footer-access-label" for="earlyAccessCode">
         <strong>Early Access Zugangscode</strong>
-        <span>Aktuell ist es mir noch nicht gelungen alle ad weiterleitungen zu blockieren (Webversion). diese erfolfolgen euber den streaming anbieter (Vidfast.vc).</span>
+        <span>Nur mit freigeschaltetem Code geht es weiter.</span>
       </label>
       <input class="footer-access-input mono" id="earlyAccessCode" type="text" inputmode="text" spellcheck="false" placeholder="Code eingeben">
       <button class="btn-small footer-access-btn" type="submit">Freischalten</button>
@@ -798,12 +873,12 @@
    APP_NAME        : Der Name deiner App. Wird überall auf der Seite
                       angezeigt und muss dem Präfix deiner Dateien
                       entsprechen: "APP_NAME-VERSION.apk" bzw.
-                      "APP_NAME-VERSION.exe"
-                      Beispiel: "MeineApp-1.2.0.apk" / "MeineApp-1.2.0.exe"
+                      "APP_NAME-VERSION.exe" bzw. "APP_NAME-VERSION.ipa"
+                      Beispiel: "MeineApp-1.2.0.apk" / "MeineApp-1.2.0.exe" / "MeineApp-1.2.0.ipa"
 
    GITHUB_OWNER     : Dein GitHub-Benutzername (oder Organisation)
    GITHUB_REPO      : Der Name des Repositories, in dem index.html
-                      und die .apk/.exe-Dateien liegen
+                      und die .apk/.exe/.ipa-Dateien liegen
    GITHUB_BRANCH    : Der Branch, in dem die Dateien liegen (meist "main")
 
    Damit die automatische Erkennung funktioniert, muss die Seite über
@@ -812,6 +887,7 @@
 
    MANUAL_APK_FILES : Optionaler manueller Fallback für Android-APKs.
    MANUAL_EXE_FILES : Optionaler manueller Fallback für PC-EXEs.
+   MANUAL_IPA_FILES : Optionaler manueller Fallback für iPhone-IPAs.
                       Wird nur verwendet, wenn die automatische
                       GitHub-Erkennung fehlschlägt (z.B. kein
                       Internetzugriff auf die GitHub-API, privates
@@ -819,10 +895,10 @@
                       Einfach die Dateinamen eintragen, die im selben
                       Ordner wie index.html liegen.
 
-   Die PC-Version (Download-Button + eigene Tabelle) wird komplett
-   automatisch ein-/ausgeblendet, je nachdem ob mindestens eine
-   passende .exe-Datei gefunden wurde. Du musst nichts manuell
-   umschalten.
+   Die PC- und iPhone-Version (Download-Button + eigene Tabelle) werden
+   komplett automatisch ein-/ausgeblendet, je nachdem ob mindestens
+   eine passende .exe- bzw. .ipa-Datei gefunden wurde. Du musst
+   nichts manuell umschalten.
    ================================================================ */
   const APP_NAME        = "Movie_Watcher";     // <-- Name deiner App eintragen
   const GITHUB_OWNER    = "Ferdi087";  // <-- GitHub-Benutzername eintragen
@@ -839,6 +915,11 @@
   const MANUAL_EXE_FILES = [
     // "MeineApp-1.0.0.exe",
     // "Movie_Watcher-1.0.exe",
+  ];
+
+  const MANUAL_IPA_FILES = [
+    // "MeineApp-1.0.0.ipa",
+    // "Movie_Watcher-1.0.ipa",
   ];
 
 /* ================================================================
@@ -930,7 +1011,7 @@
     return 0;
   }
 
-  // Generische Datei-Erkennung: baut ein Regex für eine bestimmte Endung (apk/exe)
+  // Generische Datei-Erkennung: baut ein Regex für eine bestimmte Endung (apk/exe/ipa)
   function fileRegex(ext){
     // Striktes Format: Name-Version.ext
     // Version darf nur aus Ziffern und Punkten bestehen (z.B. 1.0, 2.3.1)
@@ -943,7 +1024,7 @@
     return { filename, version: m[1], size: sizeBytes };
   }
 
-  // -------- Repo-Dateien laden (ein API-Call, danach in apk/exe aufgeteilt) --------
+  // -------- Repo-Dateien laden (ein API-Call, danach in apk/exe/ipa aufgeteilt) --------
   async function fetchRepoFiles(){
     const placeholder = GITHUB_OWNER === "dein-github-name" || GITHUB_REPO === "dein-repo-name";
     if (placeholder) throw new Error("GitHub-Konfiguration wurde noch nicht angepasst.");
@@ -958,25 +1039,28 @@
   }
 
   function loadManual(ext){
-    const list = ext === "exe" ? MANUAL_EXE_FILES : MANUAL_APK_FILES;
+    const list = ext === "exe" ? MANUAL_EXE_FILES : (ext === "ipa" ? MANUAL_IPA_FILES : MANUAL_APK_FILES);
     return list.map(name => buildEntry(name, null, ext)).filter(Boolean);
   }
 
   async function loadEntries(){
-    let apkEntries = [], exeEntries = [];
-    let apkSource = "manual", exeSource = "manual";
+    let apkEntries = [], exeEntries = [], ipaEntries = [];
+    let apkSource = "manual", exeSource = "manual", ipaSource = "manual";
     let error = null;
 
     try {
       const files = await fetchRepoFiles();
       apkEntries = files.map(f => buildEntry(f.name, f.size, "apk")).filter(Boolean);
       exeEntries = files.map(f => buildEntry(f.name, f.size, "exe")).filter(Boolean);
+      ipaEntries = files.map(f => buildEntry(f.name, f.size, "ipa")).filter(Boolean);
       apkSource = apkEntries.length ? "github" : "github-empty";
       exeSource = exeEntries.length ? "github" : "github-empty";
+      ipaSource = ipaEntries.length ? "github" : "github-empty";
     } catch (err) {
       error = err;
       apkSource = "error";
       exeSource = "error";
+      ipaSource = "error";
     }
 
     // Fallback auf manuelle Listen, falls GitHub nichts geliefert hat
@@ -988,8 +1072,12 @@
       const manual = loadManual("exe");
       if (manual.length){ exeEntries = manual; exeSource = "manual"; }
     }
+    if (ipaEntries.length === 0){
+      const manual = loadManual("ipa");
+      if (manual.length){ ipaEntries = manual; ipaSource = "manual"; }
+    }
 
-    return { apkEntries, exeEntries, apkSource, exeSource, error };
+    return { apkEntries, exeEntries, ipaEntries, apkSource, exeSource, ipaSource, error };
   }
 
   // -------- Rendering: Android/APK (Hauptbereich) --------
@@ -1141,18 +1229,78 @@
     });
   }
 
-  loadEntries().then(({ apkEntries, exeEntries, apkSource, exeSource }) => {
+  // -------- Rendering: iPhone/IPA (Button + eigene Tabelle) --------
+  function renderIosVersions(entries, source){
+    const wrap = document.getElementById("iosDownloadWrap");
+    const iosSection = document.getElementById("ios-versions");
+    const navIosLink = document.getElementById("navIosLink");
+    const iosBtn = document.getElementById("iosDownloadBtn");
+    const iosBtnVersionEl = document.getElementById("iosBtnVersion");
+    const iosSep = document.getElementById("iosSep");
+    const badgeIos = document.getElementById("badgeIosAvailable");
+    const listEl = document.getElementById("iosVersionList");
+    const statusEl = document.getElementById("iosVersionStatus");
+
+    // Keine IPA-Datei gefunden -> Button, Badge und ganze Sektion bleiben versteckt
+    if (!entries || entries.length === 0){
+      wrap.style.display = "none";
+      iosSection.style.display = "none";
+      navIosLink.style.display = "none";
+      iosSep.style.display = "none";
+      badgeIos.style.display = "none";
+      return;
+    }
+
+    // iPhone-Version wurde erkannt -> alles einblenden
+    wrap.style.display = "block";
+    iosSection.style.display = "block";
+    navIosLink.style.display = "inline";
+    iosSep.style.display = "inline";
+    badgeIos.style.display = "inline-flex";
+
+    entries.sort((a, b) => compareVersions(b.version, a.version));
+    const latest = entries[0];
+
+    iosBtn.href = encodeURIComponent(latest.filename);
+    iosBtn.setAttribute("download", latest.filename);
+    iosBtnVersionEl.textContent = "Version " + latest.version + (latest.size != null ? " · " + formatBytes(latest.size) : "");
+    iosBtn.style.opacity = "";
+    iosBtn.style.pointerEvents = "";
+
+    const sourceLabel = source === "github" ? "automatisch von GitHub erkannt" : "aus manueller Liste geladen";
+    statusEl.textContent = `${entries.length} Version${entries.length === 1 ? "" : "en"} · ${sourceLabel}`;
+
+    listEl.innerHTML = "";
+    entries.forEach((entry, i) => {
+      const card = document.createElement("div");
+      card.className = "version-card is-ios" + (i === 0 ? " is-latest" : "");
+      card.innerHTML = `
+        <div class="version-left">
+          <span class="version-tag">v${entry.version}</span>
+          <div class="version-info">
+            <span class="version-file">${entry.filename}</span>
+            <span class="version-size">${entry.size != null ? formatBytes(entry.size) : "Größe unbekannt"}</span>
+          </div>
+          ${i === 0 ? '<span class="latest-pill">Neueste</span>' : ""}
+        </div>
+        <a class="btn-small" href="${encodeURIComponent(entry.filename)}" download="${entry.filename}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3v14"></path><path d="M6 11l6 6 6-6"></path><path d="M5 21h14"></path>
+          </svg>
+          Download
+        </a>
+      `;
+      listEl.appendChild(card);
+    });
+  }
+
+  loadEntries().then(({ apkEntries, exeEntries, ipaEntries, apkSource, exeSource, ipaSource }) => {
     renderVersions(apkEntries, apkSource);
-    console.log(exeEntries);
-    console.log({
-     wrap: document.getElementById("pcDownloadWrap"),
-     section: document.getElementById("pc-versions"),
-     nav: document.getElementById("navPcLink")
-              });
     renderPcVersions(exeEntries, exeSource);
+    renderIosVersions(ipaEntries, ipaSource);
   });
 
-  // -------- Download-Button: Fortschritts-Animation (für beide Buttons) --------
+  // -------- Download-Button: Fortschritts-Animation (für alle Buttons) --------
   function attachDownloadAnimation(btn){
     if (!btn) return;
     btn.addEventListener("click", function(e){
@@ -1176,6 +1324,7 @@
   }
   attachDownloadAnimation(document.getElementById("mainDownloadBtn"));
   attachDownloadAnimation(document.getElementById("pcDownloadBtn"));
+  attachDownloadAnimation(document.getElementById("iosDownloadBtn"));
 
   // -------- Scroll-Reveal --------
   const revealTargets = document.querySelectorAll(".reveal, .stagger");
